@@ -4,7 +4,7 @@ Calculate and plot the average decay in LD with distance between SNPs
 The "LD-decay" program calculates LD (Linkage disequilibrium) using PLINK and
 estimates local LD decay by 'binning' R2 values between pairs of SNP's according
 to their distance apart.
-
+~~~~
 $ LD-decay -h
 
 Usage:

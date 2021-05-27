@@ -1,4 +1,4 @@
-static char *sccsid = "@(#)LD-decay.c  2021-05-24  A.J.Travis";
+static char *sccsid = "@(#)LD-decay.c  2021-05-27  A.J.Travis";
 
 /*
  * Calculate LD decay using PLINK
@@ -183,9 +183,15 @@ int main(int argc, char *argv[])
     /* plot histogram */
     sprintf(file, "%s.png", out);
     printf("LD-decay: plotting histogram to %s\n", file);
-    sprintf(cmd,
-	    "gnuplot -e \"set terminal png large; prefix='%s'; input=prefix.'.hist'; set title prefix; set output prefix.'.png'; set key autotitle columnhead; plot input using 1:2 with lines\"",
-	    out);
+    sprintf(cmd, "gnuplot -e \"\
+	    set terminal png large; \
+	    prefix='%s'; \
+	    input=prefix.'.hist'; set title prefix; \
+	    set output prefix.'.png'; \
+	    set key autotitle columnhead; \
+	    set yrange [0:]; \
+	    set arrow from graph 0,first 0.2 to graph 1,first 0.2 nohead lt 0; \
+	    plot input using 1:2 with lines\"", out);
     if (system(cmd) != 0) {
 	fprintf(stderr, "LD-decay: Failed to run %s\n", cmd);
 	exit(EXIT_FAILURE);
@@ -208,7 +214,8 @@ void usage()
 	    "    -q = QTL position (qtl_kb), default = entire chromosome\n");
     fprintf(stderr, "    -s = bin size (scale_kb), default = 10Kb\n");
     fprintf(stderr, "    -v = display program version\n");
-    fprintf(stderr, "    -w = QTL window size (window_kb), default = 1000\n\n");
+    fprintf(stderr,
+	    "    -w = QTL window size (window_kb), default = 1000\n\n");
     fprintf(stderr, "Files:\n");
     fprintf(stderr, "    prefix = prefix of PLINK .ped and .map files\n");
     fprintf(stderr, "    input = PLINK prefix.ped and prefix.map\n");

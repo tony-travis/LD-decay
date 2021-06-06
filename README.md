@@ -10,7 +10,7 @@ $ LD-decay -h
 Usage:
     LD-decay -c number [-q qtl_kb] [-s scale_kb] [-v] [-w window_kb] prefix
 
-Options:
+Where:
     -c = chromosome (number)
     -h = help
     -q = QTL position (qtl_kb), default = entire chromosome
@@ -22,3 +22,17 @@ Files:
     prefix = prefix of PLINK .ped and .map files
     input = PLINK prefix.ped and prefix.map
     output = prefix_chr<n>_<from_kb>_<to_kb>.hist
+
+# extract_snps
+Extract original (non-recoded) SNPS from genotype file around QTL of interest
+
+The "extract_snps" program uses PLINK to extract the original SNP's that were recoded to do GWAS.
+
+Usage:
+    extract_snps GWAS genotype phenotype "PLINK-options"
+
+Where:
+    GWAS = full path to GWAS results folder
+    genotype = full path prefix to .ped and .map files used for GWAS
+    phenotype = phenotype of interest
+    "PLINK-options" = PLINK filter options to select SNP's of interest

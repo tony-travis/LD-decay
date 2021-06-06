@@ -1,4 +1,4 @@
-#@(#)Makefile  2021-05-26  A.J.Travis
+#@(#)Makefile  2021-06-06  A.J.Travis
 
 #
 # LD-decay
@@ -6,7 +6,16 @@
 
 WGET = wget --no-check-certificate
 LD-DECAY = LD-decay
+EXTRACT_SNPS = extract_snps
 GENOTYPE = sativas413
+TARGETS = $(LD-DECAY) $(EXTRACT_SNPS)
+
+help:
+	@echo "Targets:"
+	@echo "\tall"
+	@echo "\ttest"
+
+all: $(TARGETS)
 
 $(LD-DECAY): LD-decay.c
 	cc -Wall -O -o $@ $<
@@ -32,8 +41,8 @@ test: $(LD-DECAY) $(GENOTYPE).ped $(GENOTYPE).map
 	./$< -c 11 -s 50 $(GENOTYPE)
 	./$< -c 12 -s 50 $(GENOTYPE)
 
-install: $(LD-DECAY)
-	cp -ai $< /usr/local/bin/
+install: $(TARGETS)
+	cp -ai $^ /usr/local/bin/
 
 clean:
 	rm -rf RiceDiversity_44K_Genotypes_PLINK sativas413*

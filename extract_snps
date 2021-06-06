@@ -1,0 +1,107 @@
+#!/usr/bin/perl -w
+#@(#)extract_snps  2021-05-31  A.J.Travis
+
+#
+# Extract alleles for SNPS from PLINK format .ped and .map files
+#
+
+use warnings;
+use strict;
+use File::Basename;
+
+if ( $#ARGV != 3 ) {
+    usage();
+}
+
+my $analysis  = $ARGV[0];
+my $genotype  = $ARGV[1];
+my $phenotype = $ARGV[2];
+my $snps      = $ARGV[3];
+
+my $prefix = dirname $analysis;
+my $base   = basename $analysis;
+my $cmd;
+my $pheno_file = "$prefix/$base/$base.pheno";
+my $pheno;
+my $extract  = "$base" . "_$phenotype";
+my $ped_file = "$extract.ped";
+my $ped;
+my $map_file = "$extract.map";
+my $map;
+my $out_file = "$extract.out";
+my $out;
+my $header;
+my @col = ();
+my $family;
+my $cultivar;
+my $value;
+my $allele;
+my $pcol;
+
+# check phenotype is present in pheno file
+open $pheno, "<", $pheno_file or die "extract_snps: can't open $pheno_file";
+$header = <$pheno>;
+@col    = split " ", $header;
+$pcol   = @col;
+foreach (@col) {
+    if ( $col[ --$pcol ] eq $phenotype ) {
+        last;
+    }
+}
+if ( $pcol == 0 ) {
+    print "extract_snp: $phenotype not found\n";
+    exit -1;
+}
+
+# run PLINK in sub-directory
+mkdir $extract;
+chdir $extract;
+$cmd =
+"plink1.9 --file $genotype --keep $pheno_file $snps --recode tab --out $extract";
+print "$cmd\n";
+system $cmd;
+
+# extract
+open $ped, "<", $ped_file or die "extract_snps: can't open $ped_file";
+open $map, "<", $map_file or die "extract_snps: can't open $map_file";
+open $out, ">", $out_file or die "extract_snps: can't open $out_file";
+
+# output header
+seek $pheno, 0, 0;
+$header = <$pheno>;
+@col    = split '\s+', $header;
+print $out "$col[0]\t$col[1]\t$col[$pcol]";
+while (<$map>) {
+    chomp;
+    @col = split;
+    print $out "\t$col[1]";
+}
+print $out "\n";
+
+# output original IUPAC format alleles for each phenotype
+while (<$pheno>) {
+    chomp;
+    @col      = split;
+    $family   = $col[0];
+    $cultivar = $col[1];
+    $value    = $col[$pcol];
+    $_        = <$ped>;
+    chomp;
+    @col = split '\s+', $_, 7;
+
+    if ( $col[1] ne $cultivar ) {
+        die "extract_snps: Error - conflicting genotypes $col[1] != $cultivar";
+    }
+    $allele = $col[6];
+    print $out "$family\t$cultivar\t$value\t$allele\n";
+}
+close $pheno;
+exit(0);
+
+#
+# Display correct usage
+#
+sub usage {
+    print "Usage: extract_snps GWAS genotype phenotype \"PLINK-options\"\n";
+    exit -1;
+}

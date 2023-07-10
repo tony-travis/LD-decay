@@ -26,7 +26,7 @@ Files:
 # extract_snps
 Extract original (non-recoded) SNPS from genotype file around QTL of interest
 
-The "extract_snps" program uses PLINK to extract the original SNP's that were recoded to do GWAS using the PIQUE pipeline.
+The "extract_snps" program uses PLINK to extract the original SNP's that were recoded to do GWAS using the [PIQUE](https://github.com/tony-travis/PIQUE) pipeline.
 ~~~~
 Usage:
     extract_snps GWAS genotype phenotype "PLINK-options"

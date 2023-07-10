@@ -22,6 +22,9 @@ Files:
     prefix = prefix of PLINK .ped and .map files
     input = PLINK prefix.ped and prefix.map
     output = prefix_chr<n>_<from_kb>_<to_kb>.hist
+
+Dependencies:
+    apt install plink gnuplot
 ~~~~
 # extract_snps
 Extract original (non-recoded) SNPS from genotype file around QTL of interest
@@ -36,3 +39,7 @@ Where:
     genotype = full path prefix to .ped and .map files used for GWAS
     phenotype = phenotype of interest
     "PLINK-options" = PLINK filter options to select SNP's of interest
+
+Dependencies:
+    apt install pique
+
